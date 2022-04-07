@@ -436,6 +436,7 @@ func TestInstantiateWithPermissions(t *testing.T) {
 		},
 		"onlyAddress with non matching address": {
 			srcPermission: types.AccessTypeOnlyAddress.With(otherAddr),
+			srcActor:      myAddr,
 			expError:      sdkerrors.ErrUnauthorized,
 		},
 	}
@@ -546,7 +547,7 @@ func TestExecute(t *testing.T) {
 	// make sure gas is properly deducted from ctx
 	gasAfter := ctx.GasMeter().GasConsumed()
 	if types.EnableGasVerification {
-		require.Equal(t, uint64(0x17cd2), gasAfter-gasBefore)
+		require.Equal(t, uint64(0x19505), gasAfter-gasBefore)
 	}
 	// ensure bob now exists and got both payments released
 	bobAcct = accKeeper.GetAccount(ctx, bob)
@@ -672,6 +673,7 @@ func TestExecuteWithNonExistingAddress(t *testing.T) {
 }
 
 func TestExecuteWithPanic(t *testing.T) {
+	SkipIfM1(t)
 	ctx, keepers := CreateTestInput(t, false, SupportedFeatures)
 	keeper := keepers.ContractKeeper
 
@@ -703,6 +705,7 @@ func TestExecuteWithPanic(t *testing.T) {
 }
 
 func TestExecuteWithCpuLoop(t *testing.T) {
+	SkipIfM1(t)
 	ctx, keepers := CreateTestInput(t, false, SupportedFeatures)
 	keeper := keepers.ContractKeeper
 
@@ -745,6 +748,7 @@ func TestExecuteWithCpuLoop(t *testing.T) {
 }
 
 func TestExecuteWithStorageLoop(t *testing.T) {
+	SkipIfM1(t)
 	ctx, keepers := CreateTestInput(t, false, SupportedFeatures)
 	keeper := keepers.ContractKeeper
 
@@ -786,6 +790,7 @@ func TestExecuteWithStorageLoop(t *testing.T) {
 }
 
 func TestMigrate(t *testing.T) {
+	SkipIfM1(t)
 	ctx, keepers := CreateTestInput(t, false, SupportedFeatures)
 	keeper := keepers.ContractKeeper
 
@@ -967,6 +972,7 @@ func TestMigrate(t *testing.T) {
 }
 
 func TestMigrateReplacesTheSecondIndex(t *testing.T) {
+	SkipIfM1(t)
 	ctx, keepers := CreateTestInput(t, false, SupportedFeatures)
 	example := InstantiateHackatomExampleContract(t, ctx, keepers)
 

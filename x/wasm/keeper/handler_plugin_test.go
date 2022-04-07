@@ -6,14 +6,14 @@ import (
 
 	wasmvm "github.com/CosmWasm/wasmvm"
 	wasmvmtypes "github.com/CosmWasm/wasmvm/types"
-	"github.com/cosmos/cosmos-sdk/baseapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"github.com/cosmos/cosmos-sdk/x/auth/middleware"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
-	clienttypes "github.com/cosmos/ibc-go/v2/modules/core/02-client/types"
-	channeltypes "github.com/cosmos/ibc-go/v2/modules/core/04-channel/types"
-	ibcexported "github.com/cosmos/ibc-go/v2/modules/core/exported"
+	clienttypes "github.com/cosmos/ibc-go/v3/modules/core/02-client/types"
+	channeltypes "github.com/cosmos/ibc-go/v3/modules/core/04-channel/types"
+	ibcexported "github.com/cosmos/ibc-go/v3/modules/core/exported"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -100,13 +100,13 @@ func TestSDKMessageHandlerDispatch(t *testing.T) {
 	}
 
 	var gotMsg []sdk.Msg
-	capturingMessageRouter := wasmtesting.MessageRouterFunc(func(msg sdk.Msg) baseapp.MsgServiceHandler {
+	capturingMessageRouter := wasmtesting.MessageRouterFunc(func(msg sdk.Msg) middleware.MsgServiceHandler {
 		return func(ctx sdk.Context, req sdk.Msg) (*sdk.Result, error) {
 			gotMsg = append(gotMsg, msg)
 			return &myRouterResult, nil
 		}
 	})
-	noRouteMessageRouter := wasmtesting.MessageRouterFunc(func(msg sdk.Msg) baseapp.MsgServiceHandler {
+	noRouteMessageRouter := wasmtesting.MessageRouterFunc(func(msg sdk.Msg) middleware.MsgServiceHandler {
 		return nil
 	})
 	myContractAddr := RandomAccountAddress(t)

@@ -567,7 +567,7 @@ func TestExecuteContractCmd(t *testing.T) {
 func TestGetAllContracts(t *testing.T) {
 	specs := map[string]struct {
 		src types.GenesisState
-		exp []contractMeta
+		exp []ContractMeta
 	}{
 		"read from contracts state": {
 			src: types.GenesisState{
@@ -582,7 +582,7 @@ func TestGetAllContracts(t *testing.T) {
 					},
 				},
 			},
-			exp: []contractMeta{
+			exp: []ContractMeta{
 				{
 					ContractAddress: "first-contract",
 					Info:            types.ContractInfo{Label: "first"},
@@ -600,7 +600,7 @@ func TestGetAllContracts(t *testing.T) {
 					{Sum: &types.GenesisState_GenMsgs_InstantiateContract{InstantiateContract: &types.MsgInstantiateContract{Label: "second"}}},
 				},
 			},
-			exp: []contractMeta{
+			exp: []ContractMeta{
 				{
 					ContractAddress: keeper.BuildContractAddress(0, 1).String(),
 					Info:            types.ContractInfo{Label: "first"},
@@ -620,7 +620,7 @@ func TestGetAllContracts(t *testing.T) {
 					{Sum: &types.GenesisState_GenMsgs_InstantiateContract{InstantiateContract: &types.MsgInstantiateContract{Label: "hundred"}}},
 				},
 			},
-			exp: []contractMeta{
+			exp: []ContractMeta{
 				{
 					ContractAddress: keeper.BuildContractAddress(0, 100).String(),
 					Info:            types.ContractInfo{Label: "hundred"},
@@ -642,7 +642,7 @@ func TestGetAllContracts(t *testing.T) {
 					{Sum: &types.GenesisState_GenMsgs_InstantiateContract{InstantiateContract: &types.MsgInstantiateContract{Label: "hundred"}}},
 				},
 			},
-			exp: []contractMeta{
+			exp: []ContractMeta{
 				{
 					ContractAddress: "first-contract",
 					Info:            types.ContractInfo{Label: "first"},
@@ -656,7 +656,7 @@ func TestGetAllContracts(t *testing.T) {
 	}
 	for msg, spec := range specs {
 		t.Run(msg, func(t *testing.T) {
-			got := getAllContracts(&spec.src)
+			got := GetAllContracts(&spec.src)
 			assert.Equal(t, spec.exp, got)
 		})
 	}
@@ -664,7 +664,7 @@ func TestGetAllContracts(t *testing.T) {
 }
 
 func setupGenesis(t *testing.T, wasmGenesis types.GenesisState) string {
-	appCodec := keeper.MakeEncodingConfig(t).Marshaler
+	appCodec := keeper.MakeEncodingConfig(t).Codec
 	homeDir := t.TempDir()
 
 	require.NoError(t, os.Mkdir(path.Join(homeDir, "config"), 0700))
@@ -697,7 +697,7 @@ func executeCmdWithContext(t *testing.T, homeDir string, cmd *cobra.Command) err
 	logger := log.NewNopLogger()
 	cfg, err := genutiltest.CreateDefaultTendermintConfig(homeDir)
 	require.NoError(t, err)
-	appCodec := keeper.MakeEncodingConfig(t).Marshaler
+	appCodec := keeper.MakeEncodingConfig(t).Codec
 	serverCtx := server.NewContext(viper.New(), cfg, logger)
 	clientCtx := client.Context{}.WithCodec(appCodec).WithHomeDir(homeDir)
 
@@ -709,7 +709,7 @@ func executeCmdWithContext(t *testing.T, homeDir string, cmd *cobra.Command) err
 	flagSet.Set(flags.FlagKeyringBackend, keyring.BackendTest)
 
 	mockIn := testutil.ApplyMockIODiscardOutErr(cmd)
-	kb, err := keyring.New(sdk.KeyringServiceName(), keyring.BackendTest, homeDir, mockIn)
+	kb, err := keyring.New(sdk.KeyringServiceName(), keyring.BackendTest, homeDir, mockIn, appCodec)
 	require.NoError(t, err)
 	_, err = kb.NewAccount(defaultTestKeyName, testdata.TestMnemonic, "", sdk.FullFundraiserPath, hd.Secp256k1)
 	require.NoError(t, err)
@@ -722,7 +722,7 @@ func loadModuleState(t *testing.T, homeDir string) types.GenesisState {
 	require.NoError(t, err)
 	require.Contains(t, appState, types.ModuleName)
 
-	appCodec := keeper.MakeEncodingConfig(t).Marshaler
+	appCodec := keeper.MakeEncodingConfig(t).Codec
 	var moduleState types.GenesisState
 	require.NoError(t, appCodec.UnmarshalJSON(appState[types.ModuleName], &moduleState))
 	return moduleState
