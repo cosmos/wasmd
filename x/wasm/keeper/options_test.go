@@ -4,9 +4,9 @@ import (
 	"testing"
 
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
-	distributionkeeper "github.com/cosmos/cosmos-sdk/x/distribution/keeper"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
-	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
+	distributionkeeper "github.com/iqlusioninc/liquidity-staking-module/x/distribution/keeper"
+	stakingkeeper "github.com/iqlusioninc/liquidity-staking-module/x/staking/keeper"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 

@@ -9,7 +9,7 @@ import (
 	"testing"
 	"time"
 
-	distributiontypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
+	distributiontypes "github.com/iqlusioninc/liquidity-staking-module/x/distribution/types"
 
 	wasmvm "github.com/CosmWasm/wasmvm"
 	wasmvmtypes "github.com/CosmWasm/wasmvm/types"

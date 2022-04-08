@@ -8,6 +8,8 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/CosmWasm/wasmd/x/wasm/types/compatibility"
+
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/client"
@@ -50,10 +52,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/crisis"
 	crisiskeeper "github.com/cosmos/cosmos-sdk/x/crisis/keeper"
 	crisistypes "github.com/cosmos/cosmos-sdk/x/crisis/types"
-	distr "github.com/cosmos/cosmos-sdk/x/distribution"
-	distrclient "github.com/cosmos/cosmos-sdk/x/distribution/client"
-	distrkeeper "github.com/cosmos/cosmos-sdk/x/distribution/keeper"
-	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	"github.com/cosmos/cosmos-sdk/x/evidence"
 	evidencekeeper "github.com/cosmos/cosmos-sdk/x/evidence/keeper"
 	evidencetypes "github.com/cosmos/cosmos-sdk/x/evidence/types"
@@ -75,12 +73,6 @@ import (
 	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	paramproposal "github.com/cosmos/cosmos-sdk/x/params/types/proposal"
-	"github.com/cosmos/cosmos-sdk/x/slashing"
-	slashingkeeper "github.com/cosmos/cosmos-sdk/x/slashing/keeper"
-	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
-	"github.com/cosmos/cosmos-sdk/x/staking"
-	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
-	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/cosmos/cosmos-sdk/x/upgrade"
 	upgradeclient "github.com/cosmos/cosmos-sdk/x/upgrade/client"
 	upgradekeeper "github.com/cosmos/cosmos-sdk/x/upgrade/keeper"
@@ -105,6 +97,16 @@ import (
 	ibckeeper "github.com/cosmos/ibc-go/v3/modules/core/keeper"
 	ibcmock "github.com/cosmos/ibc-go/v3/testing/mock"
 	"github.com/gorilla/mux"
+	distr "github.com/iqlusioninc/liquidity-staking-module/x/distribution"
+	distrclient "github.com/iqlusioninc/liquidity-staking-module/x/distribution/client"
+	distrkeeper "github.com/iqlusioninc/liquidity-staking-module/x/distribution/keeper"
+	distrtypes "github.com/iqlusioninc/liquidity-staking-module/x/distribution/types"
+	"github.com/iqlusioninc/liquidity-staking-module/x/slashing"
+	slashingkeeper "github.com/iqlusioninc/liquidity-staking-module/x/slashing/keeper"
+	slashingtypes "github.com/iqlusioninc/liquidity-staking-module/x/slashing/types"
+	"github.com/iqlusioninc/liquidity-staking-module/x/staking"
+	stakingkeeper "github.com/iqlusioninc/liquidity-staking-module/x/staking/keeper"
+	stakingtypes "github.com/iqlusioninc/liquidity-staking-module/x/staking/types"
 	"github.com/rakyll/statik/fs"
 	"github.com/spf13/cast"
 	abci "github.com/tendermint/tendermint/abci/types"
@@ -453,7 +455,7 @@ func NewWasmApp(
 		appCodec,
 		keys[ibchost.StoreKey],
 		app.GetSubspace(ibchost.ModuleName),
-		app.StakingKeeper,
+		compatibility.NewIBCCompatibleStakingKeeper(app.StakingKeeper),
 		app.UpgradeKeeper,
 		scopedIBCKeeper,
 	)
@@ -768,21 +770,21 @@ func (app *WasmApp) setTxHandler(txConfig client.TxConfig, indexEventsStr []stri
 		indexEvents[e] = struct{}{}
 	}
 	txHandler, err := NewDefaultTxHandler(TxHandlerOptions{
-		TxHandlerOptions:  authmiddleware.TxHandlerOptions{
-			Debug:             app.Trace(),
-			IndexEvents:       indexEvents,
-			LegacyRouter:      app.legacyRouter,
-			MsgServiceRouter:  app.MsgSvcRouter,
-			AccountKeeper:     app.AccountKeeper,
-			BankKeeper:        app.BankKeeper,
-			FeegrantKeeper:    app.FeeGrantKeeper,
-			SignModeHandler:   txConfig.SignModeHandler(),
-			SigGasConsumer:    authmiddleware.DefaultSigVerificationGasConsumer,
-			TxDecoder:         txConfig.TxDecoder(),
+		TxHandlerOptions: authmiddleware.TxHandlerOptions{
+			Debug:            app.Trace(),
+			IndexEvents:      indexEvents,
+			LegacyRouter:     app.legacyRouter,
+			MsgServiceRouter: app.MsgSvcRouter,
+			AccountKeeper:    app.AccountKeeper,
+			BankKeeper:       app.BankKeeper,
+			FeegrantKeeper:   app.FeeGrantKeeper,
+			SignModeHandler:  txConfig.SignModeHandler(),
+			SigGasConsumer:   authmiddleware.DefaultSigVerificationGasConsumer,
+			TxDecoder:        txConfig.TxDecoder(),
 		},
 		WasmConfig:        &wasmConfig,
 		TXCounterStoreKey: keys[wasm.StoreKey],
-		IBCKeeper:     app.IBCKeeper,
+		IBCKeeper:         app.IBCKeeper,
 	})
 	if err != nil {
 		panic(err)

@@ -8,6 +8,8 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/CosmWasm/wasmd/x/wasm/types/compatibility"
+
 	"github.com/CosmWasm/wasmd/x/wasm/keeper"
 
 	"github.com/cosmos/cosmos-sdk/client"
@@ -340,7 +342,7 @@ func hasAccountBalance(cmd *cobra.Command, appState map[string]json.RawMessage, 
 	}
 	cdc := clientCtx.Codec
 	var genBalIterator banktypes.GenesisBalancesIterator
-	err = genutil.ValidateAccountInGenesis(appState, genBalIterator, sender, coins, cdc)
+	err = compatibility.ValidateAccountInGenesis(appState, genBalIterator, sender, coins, cdc)
 	if err != nil {
 		return false, err
 	}
