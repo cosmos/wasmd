@@ -1,4 +1,6 @@
-package compatibility
+package genutil
+
+// DONTCOVER
 
 import (
 	"encoding/json"
@@ -10,73 +12,20 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/x/genutil"
-	genutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
 	cfg "github.com/tendermint/tendermint/config"
 	tmtypes "github.com/tendermint/tendermint/types"
 
+	"github.com/CosmWasm/wasmd/x/wasm/types/compatibility/genutil/types"
+	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	bankexported "github.com/cosmos/cosmos-sdk/x/bank/exported"
-	"github.com/cosmos/cosmos-sdk/x/bank/types"
 	stakingtypes "github.com/iqlusioninc/liquidity-staking-module/x/staking/types"
 )
 
-// ValidateAccountInGenesis checks that the provided account has a sufficient
-// balance in the set of genesis accounts.
-func ValidateAccountInGenesis(
-	appGenesisState map[string]json.RawMessage, genBalIterator types.GenesisBalancesIterator,
-	addr sdk.Address, coins sdk.Coins, cdc codec.JSONCodec,
-) error {
-
-	var stakingData stakingtypes.GenesisState
-	cdc.MustUnmarshalJSON(appGenesisState[stakingtypes.ModuleName], &stakingData)
-	bondDenom := stakingData.Params.BondDenom
-
-	var err error
-
-	accountIsInGenesis := false
-
-	genBalIterator.IterateGenesisBalances(cdc, appGenesisState,
-		func(bal bankexported.GenesisBalance) (stop bool) {
-			accAddress := bal.GetAddress()
-			accCoins := bal.GetCoins()
-
-			// ensure that account is in genesis
-			if accAddress.Equals(addr) {
-				// ensure account contains enough funds of default bond denom
-				if coins.AmountOf(bondDenom).GT(accCoins.AmountOf(bondDenom)) {
-					err = fmt.Errorf(
-						"account %s has a balance in genesis, but it only has %v%s available to stake, not %v%s",
-						addr, accCoins.AmountOf(bondDenom), bondDenom, coins.AmountOf(bondDenom), bondDenom,
-					)
-
-					return true
-				}
-
-				accountIsInGenesis = true
-				return true
-			}
-
-			return false
-		},
-	)
-
-	if err != nil {
-		return err
-	}
-
-	if !accountIsInGenesis {
-		return fmt.Errorf("account %s does not have a balance in the genesis state", addr)
-	}
-
-	return nil
-}
-
 // GenAppStateFromConfig gets the genesis app state from the config
 func GenAppStateFromConfig(cdc codec.JSONCodec, txEncodingConfig client.TxEncodingConfig,
-	config *cfg.Config, initCfg genutiltypes.InitConfig, genDoc tmtypes.GenesisDoc, genBalIterator types.GenesisBalancesIterator,
+	config *cfg.Config, initCfg types.InitConfig, genDoc tmtypes.GenesisDoc, genBalIterator types.GenesisBalancesIterator,
 ) (appState json.RawMessage, err error) {
 
 	// process genesis transactions, else create default genesis.json
@@ -96,12 +45,12 @@ func GenAppStateFromConfig(cdc codec.JSONCodec, txEncodingConfig client.TxEncodi
 	}
 
 	// create the app state
-	appGenesisState, err := genutiltypes.GenesisStateFromGenDoc(genDoc)
+	appGenesisState, err := types.GenesisStateFromGenDoc(genDoc)
 	if err != nil {
 		return appState, err
 	}
 
-	appGenesisState, err = genutil.SetGenTxsInAppGenesisState(cdc, txEncodingConfig.TxJSONEncoder(), appGenesisState, appGenTxs)
+	appGenesisState, err = SetGenTxsInAppGenesisState(cdc, txEncodingConfig.TxJSONEncoder(), appGenesisState, appGenTxs)
 	if err != nil {
 		return appState, err
 	}
@@ -112,7 +61,7 @@ func GenAppStateFromConfig(cdc codec.JSONCodec, txEncodingConfig client.TxEncodi
 	}
 
 	genDoc.AppState = appState
-	err = genutil.ExportGenesisFile(&genDoc, config.GenesisFile())
+	err = ExportGenesisFile(&genDoc, config.GenesisFile())
 
 	return appState, err
 }
