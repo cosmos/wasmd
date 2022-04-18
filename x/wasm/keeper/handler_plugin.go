@@ -9,8 +9,8 @@ import (
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	channeltypes "github.com/cosmos/ibc-go/v2/modules/core/04-channel/types"
-	host "github.com/cosmos/ibc-go/v2/modules/core/24-host"
+	channeltypes "github.com/cosmos/ibc-go/v3/modules/core/04-channel/types"
+	host "github.com/cosmos/ibc-go/v3/modules/core/24-host"
 
 	"github.com/CosmWasm/wasmd/x/wasm/types"
 )
@@ -185,7 +185,7 @@ func (h IBCRawPacketHandler) DispatchMsg(ctx sdk.Context, _ sdk.AccAddress, cont
 		contractIBCChannelID,
 		channelInfo.Counterparty.PortId,
 		channelInfo.Counterparty.ChannelId,
-		convertWasmIBCTimeoutHeightToCosmosHeight(msg.IBC.SendPacket.Timeout.Block),
+		ConvertWasmIBCTimeoutHeightToCosmosHeight(msg.IBC.SendPacket.Timeout.Block),
 		msg.IBC.SendPacket.Timeout.Timestamp,
 	)
 	return nil, nil, h.channelKeeper.SendPacket(ctx, channelCap, packet)
@@ -205,7 +205,7 @@ func (m MessageHandlerFunc) DispatchMsg(ctx sdk.Context, contractAddr sdk.AccAdd
 func NewBurnCoinMessageHandler(burner types.Burner) MessageHandlerFunc {
 	return func(ctx sdk.Context, contractAddr sdk.AccAddress, _ string, msg wasmvmtypes.CosmosMsg) (events []sdk.Event, data [][]byte, err error) {
 		if msg.Bank != nil && msg.Bank.Burn != nil {
-			coins, err := convertWasmCoinsToSdkCoins(msg.Bank.Burn.Amount)
+			coins, err := ConvertWasmCoinsToSdkCoins(msg.Bank.Burn.Amount)
 			if err != nil {
 				return nil, nil, err
 			}
