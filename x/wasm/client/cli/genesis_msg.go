@@ -10,8 +10,6 @@ import (
 
 	"github.com/CosmWasm/wasmd/x/wasm/keeper"
 
-	"github.com/CosmWasm/wasmd/x/wasm/types/compatibility/genutil"
-	genutiltypes "github.com/CosmWasm/wasmd/x/wasm/types/compatibility/genutil/types"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
@@ -19,6 +17,8 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
+	"github.com/iqlusioninc/liquidity-staking-module/x/genutil"
+	genutiltypes "github.com/iqlusioninc/liquidity-staking-module/x/genutil/types"
 	"github.com/spf13/cobra"
 	tmtypes "github.com/tendermint/tendermint/types"
 
