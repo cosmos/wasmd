@@ -109,7 +109,6 @@ func ValidateGenesis(genesisState *GenesisState, txJSONDecoder sdk.TxDecoder) er
 				"must provide genesis Tx with exactly 1 CreateValidator message")
 		}
 
-		// TODO: abstract back to staking
 		if _, ok := msgs[0].(*stakingtypes.MsgCreateValidator); !ok {
 			return fmt.Errorf(
 				"genesis transaction %v does not contain a MsgCreateValidator", i)

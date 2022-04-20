@@ -15,8 +15,6 @@ type (
 
 	// MigrationCallback converts a genesis map from the previous version to the
 	// targeted one.
-	//
-	// TODO: MigrationCallback should also return an error upon failure.
 	MigrationCallback func(AppMap, client.Context) AppMap
 
 	// MigrationMap defines a mapping from a version to a MigrationCallback.

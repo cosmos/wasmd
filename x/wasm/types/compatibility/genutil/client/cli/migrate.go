@@ -94,7 +94,6 @@ $ %s migrate v0.36 /path/to/genesis.json --chain-id=cosmoshub-3 --genesis-time=2
 				return fmt.Errorf("unknown migration function for version: %s", target)
 			}
 
-			// TODO: handler error from migrationFunc call
 			newGenState := migrationFunc(initialState, clientCtx)
 
 			genDoc.AppState, err = json.Marshal(newGenState)
