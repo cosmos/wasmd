@@ -37,8 +37,8 @@ import (
 	govclient "github.com/cosmos/cosmos-sdk/x/gov/client"
 	govkeeper "github.com/cosmos/cosmos-sdk/x/gov/keeper"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
-	govv1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
 	govv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
+	govv1beta2 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta2"
 	"github.com/cosmos/cosmos-sdk/x/mint"
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 	"github.com/cosmos/cosmos-sdk/x/params"
@@ -410,7 +410,7 @@ func createTestInput(
 	govKeeper := govkeeper.NewKeeper(
 		appCodec,
 		keys[govtypes.StoreKey],
-		subspace(govtypes.ModuleName).WithKeyTable(govv1.ParamKeyTable()),
+		subspace(govtypes.ModuleName).WithKeyTable(govv1beta2.ParamKeyTable()),
 		accountKeeper,
 		bankKeeper,
 		stakingKeeper,
@@ -420,9 +420,9 @@ func createTestInput(
 	)
 
 	govKeeper.SetProposalID(ctx, govv1beta1.DefaultStartingProposalID)
-	govKeeper.SetDepositParams(ctx, govv1.DefaultDepositParams())
-	govKeeper.SetVotingParams(ctx, govv1.DefaultVotingParams())
-	govKeeper.SetTallyParams(ctx, govv1.DefaultTallyParams())
+	govKeeper.SetDepositParams(ctx, govv1beta2.DefaultDepositParams())
+	govKeeper.SetVotingParams(ctx, govv1beta2.DefaultVotingParams())
+	govKeeper.SetTallyParams(ctx, govv1beta2.DefaultTallyParams())
 
 	am := module.NewManager( // minimal module set that we use for message/ query tests
 		bank.NewAppModule(appCodec, bankKeeper, accountKeeper),

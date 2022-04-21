@@ -3,19 +3,16 @@ package app
 import (
 	"testing"
 
+	"github.com/CosmWasm/wasmd/app/params"
+	"github.com/CosmWasm/wasmd/x/wasm"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/client"
-
-	"github.com/CosmWasm/wasmd/app/params"
-
 	"github.com/cosmos/cosmos-sdk/codec"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	capabilitykeeper "github.com/cosmos/cosmos-sdk/x/capability/keeper"
 	ibctransferkeeper "github.com/cosmos/ibc-go/v3/modules/apps/transfer/keeper"
 	ibckeeper "github.com/cosmos/ibc-go/v3/modules/core/keeper"
 	stakingkeeper "github.com/iqlusioninc/liquidity-staking-module/x/staking/keeper"
-
-	"github.com/CosmWasm/wasmd/x/wasm"
 )
 
 type TestSupport struct {
@@ -70,4 +67,5 @@ func (s TestSupport) GetTxConfig() client.TxConfig {
 	return params.MakeEncodingConfig().TxConfig
 }
 
-// TODO: add ica related methods
+// We are not going to add ICA-related methods in cosmos/wasmd since we are not trying
+// to add IA support to wasmd.
