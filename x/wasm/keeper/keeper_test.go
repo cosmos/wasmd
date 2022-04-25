@@ -25,8 +25,8 @@ import (
 
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 
-	"github.com/CosmWasm/wasmd/x/wasm/keeper/wasmtesting"
-	"github.com/CosmWasm/wasmd/x/wasm/types"
+	"github.com/cosmos/wasmd/x/wasm/keeper/wasmtesting"
+	"github.com/cosmos/wasmd/x/wasm/types"
 )
 
 // When migrated to go 1.16, embed package should be used instead.

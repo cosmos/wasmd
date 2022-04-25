@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/CosmWasm/wasmd/x/wasm/types"
+	"github.com/cosmos/wasmd/x/wasm/types"
 
 	"github.com/stretchr/testify/assert"
 

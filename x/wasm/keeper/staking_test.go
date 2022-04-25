@@ -7,7 +7,7 @@ import (
 
 	stakingtypessdk "github.com/cosmos/cosmos-sdk/x/staking/types"
 
-	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
+	wasmtypes "github.com/cosmos/wasmd/x/wasm/types"
 
 	wasmvmtypes "github.com/CosmWasm/wasmvm/types"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"

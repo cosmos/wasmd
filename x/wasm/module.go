@@ -19,10 +19,10 @@ import (
 	"github.com/spf13/cobra"
 	abci "github.com/tendermint/tendermint/abci/types"
 
-	"github.com/CosmWasm/wasmd/x/wasm/client/cli"
-	"github.com/CosmWasm/wasmd/x/wasm/keeper"
-	"github.com/CosmWasm/wasmd/x/wasm/simulation"
-	"github.com/CosmWasm/wasmd/x/wasm/types"
+	"github.com/cosmos/wasmd/x/wasm/client/cli"
+	"github.com/cosmos/wasmd/x/wasm/keeper"
+	"github.com/cosmos/wasmd/x/wasm/simulation"
+	"github.com/cosmos/wasmd/x/wasm/types"
 )
 
 var (

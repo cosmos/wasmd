@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/CosmWasm/wasmd/x/wasm/types/compatibility"
+	"github.com/cosmos/wasmd/x/wasm/types/compatibility"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/client"
@@ -39,8 +39,8 @@ import (
 	tmtypes "github.com/tendermint/tendermint/types"
 	tmversion "github.com/tendermint/tendermint/version"
 
-	wasmd "github.com/CosmWasm/wasmd/app"
-	"github.com/CosmWasm/wasmd/x/wasm"
+	wasmd "github.com/cosmos/wasmd/app"
+	"github.com/cosmos/wasmd/x/wasm"
 )
 
 // TestChain is a testing struct that wraps a simapp with the last TM Header, the current ABCI

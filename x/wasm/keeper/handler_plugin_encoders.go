@@ -15,8 +15,8 @@ import (
 	distributiontypes "github.com/iqlusioninc/liquidity-staking-module/x/distribution/types"
 	stakingtypes "github.com/iqlusioninc/liquidity-staking-module/x/staking/types"
 
-	"github.com/CosmWasm/wasmd/x/wasm/types"
 	govtypesv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
+	"github.com/cosmos/wasmd/x/wasm/types"
 )
 
 type BankEncoder func(sender sdk.AccAddress, msg *wasmvmtypes.BankMsg) ([]sdk.Msg, error)

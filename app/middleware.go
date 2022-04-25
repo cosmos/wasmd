@@ -1,8 +1,6 @@
 package app
 
 import (
-	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
-	wasmTypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/types/tx"
@@ -10,6 +8,8 @@ import (
 	authmiddleware "github.com/cosmos/cosmos-sdk/x/auth/middleware"
 	ibckeeper "github.com/cosmos/ibc-go/v3/modules/core/keeper"
 	ibcmiddleware "github.com/cosmos/ibc-go/v3/modules/core/middleware"
+	wasmkeeper "github.com/cosmos/wasmd/x/wasm/keeper"
+	wasmTypes "github.com/cosmos/wasmd/x/wasm/types"
 )
 
 // ComposeMiddlewares compose multiple middlewares on top of a tx.Handler. The
@@ -38,7 +38,7 @@ type TxHandlerOptions struct {
 
 	TXCounterStoreKey storetypes.StoreKey
 	WasmConfig        *wasmTypes.WasmConfig
-	IBCKeeper *ibckeeper.Keeper
+	IBCKeeper         *ibckeeper.Keeper
 }
 
 // NewDefaultTxHandler defines a TxHandler middleware stacks that should work

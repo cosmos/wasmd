@@ -4,7 +4,7 @@ executors:
   golang:
     docker:
       - image: circleci/golang:1.17
-    working_directory: /go/src/github.com/cosmwasm/wasmd
+    working_directory: /go/src/github.com/cosmos/wasmd
 
 commands:
   make:

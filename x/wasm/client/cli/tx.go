@@ -14,8 +14,8 @@ import (
 	"github.com/spf13/cobra"
 	flag "github.com/spf13/pflag"
 
-	wasmUtils "github.com/CosmWasm/wasmd/x/wasm/client/utils"
-	"github.com/CosmWasm/wasmd/x/wasm/types"
+	wasmUtils "github.com/cosmos/wasmd/x/wasm/client/utils"
+	"github.com/cosmos/wasmd/x/wasm/types"
 )
 
 const (

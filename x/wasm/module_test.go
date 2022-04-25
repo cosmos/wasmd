@@ -18,8 +18,8 @@ import (
 	"github.com/tendermint/tendermint/crypto"
 	"github.com/tendermint/tendermint/crypto/ed25519"
 
-	"github.com/CosmWasm/wasmd/x/wasm/keeper"
-	"github.com/CosmWasm/wasmd/x/wasm/types"
+	"github.com/cosmos/wasmd/x/wasm/keeper"
+	"github.com/cosmos/wasmd/x/wasm/types"
 )
 
 type testData struct {

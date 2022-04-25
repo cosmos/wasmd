@@ -8,7 +8,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/CosmWasm/wasmd/x/wasm/types/compatibility"
+	"github.com/cosmos/wasmd/x/wasm/types/compatibility"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -72,11 +72,11 @@ import (
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 	dbm "github.com/tendermint/tm-db"
 
-	wasmappparams "github.com/CosmWasm/wasmd/app/params"
+	wasmappparams "github.com/cosmos/wasmd/app/params"
 
-	"github.com/CosmWasm/wasmd/x/wasm/keeper/wasmtesting"
-	"github.com/CosmWasm/wasmd/x/wasm/types"
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
+	"github.com/cosmos/wasmd/x/wasm/keeper/wasmtesting"
+	"github.com/cosmos/wasmd/x/wasm/types"
 )
 
 var ModuleBasics = module.NewBasicManager(
