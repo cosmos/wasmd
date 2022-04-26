@@ -20,6 +20,7 @@ import (
 
 // Try a simple send, no gas limit to for a sanity check before trying table tests
 func TestDispatchSubMsgSuccessCase(t *testing.T) {
+	SkipIfM1(t)
 	ctx, keepers := CreateTestInput(t, false, ReflectFeatures)
 	accKeeper, keeper, bankKeeper := keepers.AccountKeeper, keepers.WasmKeeper, keepers.BankKeeper
 
@@ -108,6 +109,7 @@ func TestDispatchSubMsgSuccessCase(t *testing.T) {
 }
 
 func TestDispatchSubMsgErrorHandling(t *testing.T) {
+	SkipIfM1(t)
 	fundedDenom := "funds"
 	fundedAmount := 1_000_000
 	ctxGasLimit := uint64(1_000_000)
@@ -225,7 +227,7 @@ func TestDispatchSubMsgErrorHandling(t *testing.T) {
 		assert.NotEqual(t, contract, eventAddr)
 
 		var res types.MsgInstantiateContractResponse
-		keepers.EncodingConfig.Marshaler.MustUnmarshal(response.Ok.Data, &res)
+		keepers.EncodingConfig.Codec.MustUnmarshal(response.Ok.Data, &res)
 		assert.Equal(t, eventAddr, res.Address)
 	}
 
@@ -247,14 +249,14 @@ func TestDispatchSubMsgErrorHandling(t *testing.T) {
 		"send tokens": {
 			submsgID:         5,
 			msg:              validBankSend,
-			resultAssertions: []assertion{assertReturnedEvents(3), assertGasUsed(112000, 112900)},
+			resultAssertions: []assertion{assertReturnedEvents(3), assertGasUsed(117166, 117166)},
 		},
 		"not enough tokens": {
 			submsgID:    6,
 			msg:         invalidBankSend,
 			subMsgError: true,
 			// uses less gas than the send tokens (cost of bank transfer)
-			resultAssertions: []assertion{assertGasUsed(76000, 79000), assertErrorString("insufficient funds")},
+			resultAssertions: []assertion{assertGasUsed(76000, 79000), assertErrorString("codespace: sdk, code: 5")},
 		},
 		"out of gas panic with no gas limit": {
 			submsgID:        7,
@@ -267,7 +269,7 @@ func TestDispatchSubMsgErrorHandling(t *testing.T) {
 			msg:      validBankSend,
 			gasLimit: &subGasLimit,
 			// uses same gas as call without limit (note we do not charge the 40k on reply)
-			resultAssertions: []assertion{assertReturnedEvents(3), assertGasUsed(112000, 113000)},
+			resultAssertions: []assertion{assertReturnedEvents(3), assertGasUsed(112000, 117268)},
 		},
 		"not enough tokens with limit": {
 			submsgID:    16,
@@ -275,7 +277,7 @@ func TestDispatchSubMsgErrorHandling(t *testing.T) {
 			subMsgError: true,
 			gasLimit:    &subGasLimit,
 			// uses same gas as call without limit (note we do not charge the 40k on reply)
-			resultAssertions: []assertion{assertGasUsed(79000, 79040), assertErrorString("insufficient funds")},
+			resultAssertions: []assertion{assertGasUsed(77800, 77900), assertErrorString("codespace: sdk, code: 5")},
 		},
 		"out of gas caught with gas limit": {
 			submsgID:    17,
@@ -283,7 +285,7 @@ func TestDispatchSubMsgErrorHandling(t *testing.T) {
 			subMsgError: true,
 			gasLimit:    &subGasLimit,
 			// uses all the subGasLimit, plus the 52k or so for the main contract
-			resultAssertions: []assertion{assertGasUsed(subGasLimit+73000, subGasLimit+80000), assertErrorString("out of gas")},
+			resultAssertions: []assertion{assertGasUsed(subGasLimit+73000, subGasLimit+74000), assertErrorString("codespace: sdk, code: 11")},
 		},
 		"instantiate contract gets address in data and events": {
 			submsgID:         21,
@@ -363,6 +365,7 @@ func TestDispatchSubMsgErrorHandling(t *testing.T) {
 // Test an error case, where the Encoded doesn't return any sdk.Msg and we trigger(ed) a null pointer exception.
 // This occurs with the IBC encoder. Test this.
 func TestDispatchSubMsgEncodeToNoSdkMsg(t *testing.T) {
+	SkipIfM1(t)
 	// fake out the bank handle to return success with no data
 	nilEncoder := func(sender sdk.AccAddress, msg *wasmvmtypes.BankMsg) ([]sdk.Msg, error) {
 		return nil, nil
@@ -439,6 +442,7 @@ func TestDispatchSubMsgEncodeToNoSdkMsg(t *testing.T) {
 
 // Try a simple send, no gas limit to for a sanity check before trying table tests
 func TestDispatchSubMsgConditionalReplyOn(t *testing.T) {
+	SkipIfM1(t)
 	ctx, keepers := CreateTestInput(t, false, ReflectFeatures)
 	keeper := keepers.WasmKeeper
 

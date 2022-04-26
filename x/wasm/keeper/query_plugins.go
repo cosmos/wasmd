@@ -3,11 +3,10 @@ package keeper
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
 
-	channeltypes "github.com/cosmos/ibc-go/v2/modules/core/04-channel/types"
+	channeltypes "github.com/cosmos/ibc-go/v3/modules/core/04-channel/types"
 
 	"github.com/CosmWasm/wasmd/x/wasm/types"
 
@@ -16,7 +15,6 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	distributiontypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	abci "github.com/tendermint/tendermint/abci/types"
 )
 
 type QueryHandler struct {
@@ -55,12 +53,19 @@ func (q QueryHandler) Query(request wasmvmtypes.QueryRequest, gasLimit uint64) (
 	}()
 
 	res, err := q.Plugins.HandleQuery(subCtx, q.Caller, request)
-	// Error mapping
+	if err == nil {
+		// short-circuit, the rest is dealing with handling existing errors
+		return res, nil
+	}
+
+	// special mappings to system error (which are not redacted)
 	var noSuchContract *types.ErrNoSuchContract
 	if ok := errors.As(err, &noSuchContract); ok {
-		return res, wasmvmtypes.NoSuchContract{Addr: noSuchContract.Addr}
+		err = wasmvmtypes.NoSuchContract{Addr: noSuchContract.Addr}
 	}
-	return res, err
+
+	// Issue #759 - we don't return error string for worries of non-determinism
+	return nil, redactError(err)
 }
 
 func (q QueryHandler) GasConsumed() uint64 {
@@ -265,19 +270,7 @@ func IBCQuerier(wasm contractMetaDataSource, channelKeeper types.ChannelKeeper) 
 
 func StargateQuerier(queryRouter GRPCQueryRouter) func(ctx sdk.Context, request *wasmvmtypes.StargateQuery) ([]byte, error) {
 	return func(ctx sdk.Context, msg *wasmvmtypes.StargateQuery) ([]byte, error) {
-		route := queryRouter.Route(msg.Path)
-		if route == nil {
-			return nil, wasmvmtypes.UnsupportedRequest{Kind: fmt.Sprintf("No route to query '%s'", msg.Path)}
-		}
-		req := abci.RequestQuery{
-			Data: msg.Data,
-			Path: msg.Path,
-		}
-		res, err := route(ctx, req)
-		if err != nil {
-			return nil, err
-		}
-		return res.Value, nil
+		return nil, wasmvmtypes.UnsupportedRequest{Kind: "Stargate queries are disabled."}
 	}
 }
 

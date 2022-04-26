@@ -1,3 +1,4 @@
+//nolint:staticcheck
 package cli
 
 import (
@@ -8,7 +9,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/gov/client/cli"
-	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
+	govtypesv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
@@ -62,7 +63,7 @@ func ProposalStoreCodeCmd() *cobra.Command {
 				InstantiatePermission: src.InstantiatePermission,
 			}
 
-			msg, err := govtypes.NewMsgSubmitProposal(&content, deposit, clientCtx.GetFromAddress())
+			msg, err := govtypesv1beta1.NewMsgSubmitProposal(&content, deposit, clientCtx.GetFromAddress())
 			if err != nil {
 				return err
 			}
@@ -139,7 +140,7 @@ func ProposalInstantiateContractCmd() *cobra.Command {
 				Funds:       src.Funds,
 			}
 
-			msg, err := govtypes.NewMsgSubmitProposal(&content, deposit, clientCtx.GetFromAddress())
+			msg, err := govtypesv1beta1.NewMsgSubmitProposal(&content, deposit, clientCtx.GetFromAddress())
 			if err != nil {
 				return err
 			}
@@ -154,6 +155,7 @@ func ProposalInstantiateContractCmd() *cobra.Command {
 	cmd.Flags().String(flagLabel, "", "A human-readable name for this contract in lists")
 	cmd.Flags().String(flagAdmin, "", "Address of an admin")
 	cmd.Flags().String(flagRunAs, "", "The address that pays the init funds. It is the creator of the contract and passed to the contract as sender on proposal execution")
+	cmd.Flags().Bool(flagNoAdmin, false, "You must set this explicitly if you don't want an admin")
 
 	// proposal flags
 	cmd.Flags().String(cli.FlagTitle, "", "Title of proposal")
@@ -206,7 +208,7 @@ func ProposalMigrateContractCmd() *cobra.Command {
 				Msg:         src.Msg,
 			}
 
-			msg, err := govtypes.NewMsgSubmitProposal(&content, deposit, clientCtx.GetFromAddress())
+			msg, err := govtypesv1beta1.NewMsgSubmitProposal(&content, deposit, clientCtx.GetFromAddress())
 			if err != nil {
 				return err
 			}
@@ -283,7 +285,7 @@ func ProposalExecuteContractCmd() *cobra.Command {
 				Funds:       funds,
 			}
 
-			msg, err := govtypes.NewMsgSubmitProposal(&content, deposit, clientCtx.GetFromAddress())
+			msg, err := govtypesv1beta1.NewMsgSubmitProposal(&content, deposit, clientCtx.GetFromAddress())
 			if err != nil {
 				return err
 			}
@@ -345,7 +347,7 @@ func ProposalSudoContractCmd() *cobra.Command {
 				Msg:         sudoMsg,
 			}
 
-			msg, err := govtypes.NewMsgSubmitProposal(&content, deposit, clientCtx.GetFromAddress())
+			msg, err := govtypesv1beta1.NewMsgSubmitProposal(&content, deposit, clientCtx.GetFromAddress())
 			if err != nil {
 				return err
 			}
@@ -407,7 +409,7 @@ func ProposalUpdateContractAdminCmd() *cobra.Command {
 				NewAdmin:    src.NewAdmin,
 			}
 
-			msg, err := govtypes.NewMsgSubmitProposal(&content, deposit, clientCtx.GetFromAddress())
+			msg, err := govtypesv1beta1.NewMsgSubmitProposal(&content, deposit, clientCtx.GetFromAddress())
 			if err != nil {
 				return err
 			}
@@ -462,7 +464,7 @@ func ProposalClearContractAdminCmd() *cobra.Command {
 				Contract:    args[0],
 			}
 
-			msg, err := govtypes.NewMsgSubmitProposal(&content, deposit, clientCtx.GetFromAddress())
+			msg, err := govtypesv1beta1.NewMsgSubmitProposal(&content, deposit, clientCtx.GetFromAddress())
 			if err != nil {
 				return err
 			}
@@ -521,7 +523,7 @@ func ProposalPinCodesCmd() *cobra.Command {
 				CodeIDs:     codeIds,
 			}
 
-			msg, err := govtypes.NewMsgSubmitProposal(&content, deposit, clientCtx.GetFromAddress())
+			msg, err := govtypesv1beta1.NewMsgSubmitProposal(&content, deposit, clientCtx.GetFromAddress())
 			if err != nil {
 				return err
 			}
@@ -592,7 +594,7 @@ func ProposalUnpinCodesCmd() *cobra.Command {
 				CodeIDs:     codeIds,
 			}
 
-			msg, err := govtypes.NewMsgSubmitProposal(&content, deposit, clientCtx.GetFromAddress())
+			msg, err := govtypesv1beta1.NewMsgSubmitProposal(&content, deposit, clientCtx.GetFromAddress())
 			if err != nil {
 				return err
 			}

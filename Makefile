@@ -65,6 +65,9 @@ ldflags = -X github.com/cosmos/cosmos-sdk/version.Name=wasm \
 ifeq ($(WITH_CLEVELDB),yes)
   ldflags += -X github.com/cosmos/cosmos-sdk/types.DBBackend=cleveldb
 endif
+ifeq ($(LINK_STATICALLY),true)
+	ldflags += -linkmode=external -extldflags "-Wl,-z,muldefs -static"
+endif
 ldflags += $(LDFLAGS)
 ldflags := $(strip $(ldflags))
 
@@ -119,7 +122,7 @@ distclean: clean
 
 
 test: test-unit
-test-all: check test-race test-cover
+test-all: test-race test-cover
 
 test-unit:
 	@VERSION=$(VERSION) go test -mod=readonly -tags='ledger test_ledger_mock' ./...
